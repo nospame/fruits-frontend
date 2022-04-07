@@ -33,6 +33,22 @@ export default {
         .then(response => {
           console.log(response.data);
           this.fruits.push(response.data);
+          this.currentFruit = {};
+        })
+    },
+    updateFruit: function (fruit) {
+      console.log('in fruit update');
+      axios.patch(`/fruits/${fruit.id}`, fruit)
+        .then(response => {
+          console.log(response.data);
+        })
+    },
+    destroyFruit: function (fruit) {
+      console.log('in fruit destroy');
+      axios.delete(`/fruits/${fruit.id}`)
+        .then(response => {
+          console.log(response.data);
+          this.fruits.splice(this.fruits.indexOf(fruit));
         })
     }
   },
@@ -69,9 +85,27 @@ export default {
     <dialog id="fruit-details">
       <form method="dialog">
         <img v-bind:src="currentFruit.image_url" class="show-img" />
-        <p>Name: {{ currentFruit.name }}</p>
-        <p>Family: {{ currentFruit.family }}</p>
-        <p>Color: {{ currentFruit.color }}</p>
+        <p>
+          Name:
+          <input v-model="currentFruit.name" />
+        </p>
+        <p>
+          Family:
+          <input v-model="currentFruit.family" />
+        </p>
+        <p>
+          Color:
+          <input v-model="currentFruit.color" />
+        </p>
+        <p>
+          Image URL:
+          <input v-model="currentFruit.image_url" />
+        </p>
+        <p>
+          <button v-on:click="updateFruit(currentFruit)">Save Changes</button>
+
+          <button v-on:click="destroyFruit(currentFruit)">Delete Fruit</button>
+        </p>
         <button>Close</button>
       </form>
     </dialog>

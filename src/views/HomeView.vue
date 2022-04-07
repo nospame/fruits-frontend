@@ -6,7 +6,8 @@ export default {
       message: "This is the Fruits App",
       fruits: [],
       currentFruit: {},
-      newFruit: {}
+      newFruit: {},
+      errors: []
     };
   },
   created: function () {
@@ -33,7 +34,12 @@ export default {
         .then(response => {
           console.log(response.data);
           this.fruits.push(response.data);
-          this.currentFruit = {};
+          this.newFruit = {};
+          this.errors = [];
+        })
+        .catch(errors => {
+          this.errors = errors.response.data.errors;
+          console.log(this.errors);
         })
     },
     updateFruit: function (fruit) {
@@ -41,6 +47,7 @@ export default {
       axios.patch(`/fruits/${fruit.id}`, fruit)
         .then(response => {
           console.log(response.data);
+          this.errors = [];
         })
     },
     destroyFruit: function (fruit) {
@@ -74,13 +81,18 @@ export default {
       Image URL:
       <input v-model="newFruit.image_url" />
     </p>
+
+    <p v-for="error in errors" class="error">{{ error }}</p>
+
     <button v-on:click="createFruit(newFruit)">Add Fruit</button>
     <div v-for="fruit in fruits">
-      <img v-bind:src="fruit.image_url" class="index-img" />
-      <br />
-      {{ fruit.name }}
-      <br />
-      <button v-on:click="showFruit(fruit)">Details</button>
+      <p>
+        <img v-bind:src="fruit.image_url" class="index-img" />
+        <br />
+        {{ fruit.name }}
+        <br />
+        <button v-on:click="showFruit(fruit)">Details</button>
+      </p>
     </div>
     <dialog id="fruit-details">
       <form method="dialog">
@@ -119,5 +131,10 @@ export default {
 
 .show-img {
   width: 450px;
+}
+
+.error {
+  color: crimson;
+  font-style: italic;
 }
 </style>
